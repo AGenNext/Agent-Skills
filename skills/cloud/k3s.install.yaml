@@ -1,0 +1,18 @@
+id: k3s.install
+name: Install k3s
+category: cloud
+risk: high
+runtime_profiles:
+  - k8smicro
+required_tools:
+  - ssh.run_script
+  - kubernetes.get_nodes
+required_secrets:
+  - ssh_private_key
+approval_required: true
+inputs:
+  target_host: string
+  ssh_user: string
+outputs:
+  kubeconfig: secret_ref
+  node_status: object
