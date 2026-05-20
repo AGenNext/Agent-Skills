@@ -36,6 +36,7 @@ DEFINE FIELD published_structured_data_context ON TABLE skill_source_v1 TYPE opt
 
 DEFINE FIELD source_repository ON TABLE skill_source_v1 TYPE option<string>;
 DEFINE FIELD source_path ON TABLE skill_source_v1 TYPE option<string>;
+DEFINE FIELD source_format ON TABLE skill_source_v1 TYPE option<string> ASSERT $value = NONE OR $value INSIDE ["yaml", "json", "markdown", "html", "text"];
 DEFINE FIELD source_commit_sha ON TABLE skill_source_v1 TYPE option<string>;
 DEFINE FIELD source_hash ON TABLE skill_source_v1 TYPE option<string>;
 
@@ -51,6 +52,4 @@ DEFINE INDEX skill_source_v1_risk ON TABLE skill_source_v1 FIELDS risk;
 DEFINE INDEX skill_source_v1_lifecycle_status ON TABLE skill_source_v1 FIELDS lifecycle_status;
 DEFINE INDEX skill_source_v1_source_hash ON TABLE skill_source_v1 FIELDS source_hash;
 
-DEFINE EVENT skill_source_v1_touch ON TABLE skill_source_v1 WHEN $event = "UPDATE" THEN (
-  UPDATE $after.id SET updated_at = time::now()
-);
+-- updated_at is set by import/update pipelines to avoid event recursion.
