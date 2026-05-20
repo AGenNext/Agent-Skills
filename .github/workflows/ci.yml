@@ -9,25 +9,103 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Agent-Skills
+        uses: actions/checkout@v4
+        with:
+          path: Agent-Skills
 
-      - name: Enforce native skill artifact contract
+      - name: Checkout Agent-Grammar
+        uses: actions/checkout@v4
+        with:
+          repository: AGenNext/Agent-Grammar
+          path: Agent-Grammar
+
+      - name: Checkout Agent-Graph
+        uses: actions/checkout@v4
+        with:
+          repository: AGenNext/Agent-Graph
+          path: Agent-Graph
+
+      - name: Install SurrealDB
+        run: |
+          set -euo pipefail
+          curl -sSf https://install.surrealdb.com | sh
+          echo "$HOME/.surrealdb" >> "$GITHUB_PATH"
+
+      - name: Run database-level artifact validation
         run: |
           set -euo pipefail
 
-          test -f surreal/skill-source.v1.surql
-          grep -q "DEFINE TABLE skill_source_v1 SCHEMAFULL" surreal/skill-source.v1.surql
-          grep -q "TYPE record<grammar_context>" surreal/skill-source.v1.surql
-          grep -q "source_format" surreal/skill-source.v1.surql
-          grep -q "semantic_class" surreal/skill-source.v1.surql
-          grep -q "CreativeWork" surreal/skill-source.v1.surql
-          grep -q "Agent-Graph" surreal/skill-source.v1.surql
-          grep -q "does_not_define_graph_schema" surreal/skill-source.v1.surql
+          surreal start --user root --pass root memory --allow-all > surreal.log 2>&1 &
+          sleep 5
 
-          test -d skills
-          test -n "$(find skills -name '*.yaml' -o -name '*.yml' | head -n 1)"
+          CONN="http://127.0.0.1:8000"
+          AUTH="--user root --pass root --ns agennext --db ci"
 
-          if grep -R "@context: https://schema.org" skills surreal; then
-            echo "Source artifacts must not use plain Schema.org context"
+          surreal sql --conn "$CONN" $AUTH < Agent-Grammar/rules/surrealql/artifact/artifact-native-object.v1.surql
+          surreal sql --conn "$CONN" $AUTH < Agent-Grammar/rules/surrealql/blueprint/source.v1.surql
+          surreal sql --conn "$CONN" $AUTH < Agent-Skills/surreal/skill-source.v1.surql
+          surreal sql --conn "$CONN" $AUTH < Agent-Graph/surreal/artifacts/import-pipeline.v1.surql
+
+          cat > /tmp/skill-smoke.surql <<'SURQL'
+          LET $source = {
+            repository: "AGenNext/Agent-Skills",
+            path: "skills/cloud/k3s.install.yaml",
+            format: "yaml",
+            commit_sha: "ci",
+            hash: "ci-skill-smoke"
+          };
+
+          LET $doc = {
+            id: "k3s.install",
+            name: "Install k3s",
+            category: "cloud",
+            risk: "high",
+            runtime_profiles: ["k8smicro"],
+            required_tools: ["ssh.run_script", "kubernetes.get_nodes"],
+            required_secrets: ["ssh_private_key"],
+            approval_required: true,
+            inputs: {
+              target_host: "string",
+              ssh_user: "string"
+            },
+            outputs: {
+              kubeconfig: "secret_ref",
+              node_status: "object"
+            }
+          };
+
+          LET $created = fn::create_skill_source_record_v1($doc, $source);
+          SELECT * FROM skill_source_v1 WHERE skill_id = "k3s.install";
+          SURQL
+
+          surreal sql --conn "$CONN" $AUTH < /tmp/skill-smoke.surql
+
+          cat > /tmp/source-context-negative.surql <<'SURQL'
+          CREATE skill_source_v1 CONTENT {
+            context: grammar_context:schema_org_export,
+            type: "ag:Skill",
+            skill_id: "invalid.schema_org_source",
+            name: "Invalid Schema.org Source",
+            version: "0.1.0",
+            lifecycle_status: "draft",
+            category: "test",
+            risk: "low",
+            runtime_profiles: [],
+            required_tools: [],
+            approval_required: false,
+            inputs: {},
+            outputs: {},
+            graph_context_owner: "Agent-Graph",
+            semantic_class: "CreativeWork",
+            graph_ownership: "Agent-Graph",
+            does_not_define_graph_schema: true
+          };
+          SURQL
+
+          if surreal sql --conn "$CONN" $AUTH < /tmp/source-context-negative.surql; then
+            echo "Expected Schema.org source context insert to fail, but it succeeded"
             exit 1
+          else
+            echo "Schema.org source context correctly rejected"
           fi
