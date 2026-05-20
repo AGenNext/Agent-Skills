@@ -7,6 +7,8 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    env:
+      SURREALDB_VERSION: v2.2.1
 
     steps:
       - name: Checkout Agent-Skills
@@ -26,11 +28,14 @@ jobs:
           repository: AGenNext/Agent-Graph
           path: Agent-Graph
 
-      - name: Install SurrealDB
+      - name: Install pinned SurrealDB
         run: |
           set -euo pipefail
-          curl -sSf https://install.surrealdb.com | sh
-          echo "$HOME/.surrealdb" >> "$GITHUB_PATH"
+          curl -L "https://github.com/surrealdb/surrealdb/releases/download/${SURREALDB_VERSION}/surreal-${SURREALDB_VERSION}.linux-amd64.tgz" -o surreal.tgz
+          tar -xzf surreal.tgz
+          chmod +x surreal
+          sudo mv surreal /usr/local/bin/surreal
+          surreal version
 
       - name: Run database-level artifact validation
         run: |
