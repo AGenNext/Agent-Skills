@@ -1,0 +1,15 @@
+id: linux.harden_node
+name: Harden Linux Node
+category: security
+risk: high
+runtime_profiles:
+  - k8smicro
+required_tools:
+  - ssh.run_script
+required_secrets:
+  - ssh_private_key
+approval_required: true
+inputs:
+  target_host: string
+outputs:
+  hardening_report: object
