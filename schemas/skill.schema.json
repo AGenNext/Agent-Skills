@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/AGenNext/Agent-Skills/schemas/skill.schema.json",
+  "$id": "skill.schema.json",
   "title": "AGenNext Skill DB Record",
-  "description": "Database-shaped skill_source_v1 record contract aligned with surreal/skill-source.v1.surql. Context is managed by Agent-Graph and intentionally excluded from this import/export schema.",
+  "description": "Database-shaped skill_source_v1 record contract. Context is intentionally excluded from this import/export schema.",
   "type": "object",
   "required": [
     "type",
