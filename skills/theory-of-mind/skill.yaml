@@ -1,0 +1,176 @@
+id: skill.theory_of_mind
+name: Theory of Mind
+version: 0.1.0
+status: draft
+
+category:
+  - cognitive
+  - collaboration
+  - trust
+  - governance
+
+description: >
+  Enables an agent to model and reason about the beliefs, intentions, knowledge states,
+  uncertainty, goals, preferences, capabilities, permissions, and trust relationships
+  of humans, agents, teams, systems, and organizations.
+
+purpose:
+  - infer explicit and implicit human intent
+  - track actor beliefs separately from objective truth
+  - identify knowledge gaps between actors
+  - evaluate handoff readiness before delegation
+  - calibrate trust before autonomous coordination
+  - adapt explanations to stakeholder perspective
+  - detect uncertainty before execution
+
+inputs:
+  - conversation
+  - task
+  - actor_context
+  - memory
+  - knowledge_graph
+  - policy_context
+  - tool_context
+  - execution_history
+
+outputs:
+  - inferred_intent
+  - actor_beliefs
+  - knowledge_map
+  - assumptions
+  - uncertainties
+  - trust_calibration
+  - handoff_readiness
+  - recommended_next_action
+
+capabilities:
+  intent_inference:
+    description: Infer direct, implicit, and business-level goals from user or agent instructions.
+    maturity_levels:
+      foundational:
+        - extract direct intent
+        - detect missing context
+      advanced:
+        - infer business objective
+        - detect conflicting goals
+      expert:
+        - reason across stakeholders
+        - maintain evolving intent model
+
+  belief_modeling:
+    description: Track what each actor believes, including stale, partial, or false beliefs.
+    maturity_levels:
+      foundational:
+        - record actor beliefs
+      advanced:
+        - compare beliefs against known truth
+        - detect stale belief
+      expert:
+        - predict actor action from belief state
+
+  knowledge_attribution:
+    description: Determine who knows what, who does not know what, and who needs what before action.
+    maturity_levels:
+      foundational:
+        - map known and unknown context
+      advanced:
+        - detect knowledge mismatch
+      expert:
+        - recommend context transfer before handoff
+
+  capability_modeling:
+    description: Determine whether an actor can safely perform a task based on skills, tools, permissions, and reliability.
+    maturity_levels:
+      foundational:
+        - check declared skills
+      advanced:
+        - check tools and permissions
+      expert:
+        - evaluate reliability, risk, and trust before delegation
+
+  perspective_modeling:
+    description: Adapt explanations and decisions to audience role, responsibility, and context.
+    maturity_levels:
+      foundational:
+        - explain at simple and technical levels
+      advanced:
+        - adapt for role and responsibility
+      expert:
+        - produce governance, executive, developer, operator, and audit views
+
+  uncertainty_modeling:
+    description: Identify assumptions, ambiguity, missing evidence, and stale context.
+    maturity_levels:
+      foundational:
+        - list unknowns
+      advanced:
+        - assign confidence
+      expert:
+        - decide whether to clarify, retrieve, escalate, stop, or proceed
+
+dependencies:
+  required:
+    - skill.reasoning
+    - skill.memory
+    - skill.context_management
+  recommended:
+    - skill.knowledge_graph_navigation
+    - skill.trust_evaluation
+    - skill.decision_intelligence
+    - skill.policy_reasoning
+
+runtime_compatibility:
+  before_planning:
+    - infer_intent
+    - identify_uncertainty
+  before_handoff:
+    - evaluate_capability_match
+    - evaluate_knowledge_match
+    - evaluate_permission_match
+    - evaluate_trust_match
+  before_tool_use:
+    - verify_actor_permission
+    - detect_policy_risk
+  before_response:
+    - adapt_to_audience
+    - expose_assumptions_when_needed
+
+governance:
+  requires_audit_log: true
+  requires_confidence_score: true
+  requires_assumption_tracking: true
+  risk_classification: high
+  requires_human_review_when:
+    - confidence_below_threshold
+    - high_risk_action
+    - actor_belief_conflict
+    - policy_uncertainty
+    - handoff_to_low_trust_agent
+
+metrics:
+  - intent_accuracy
+  - belief_accuracy
+  - knowledge_attribution_accuracy
+  - handoff_readiness_score
+  - uncertainty_detection_score
+  - trust_calibration_score
+  - perspective_adaptation_score
+
+composite_score:
+  name: agent_tom_score
+  formula:
+    intent_accuracy: 0.25
+    belief_accuracy: 0.20
+    knowledge_attribution_accuracy: 0.20
+    trust_calibration_score: 0.15
+    uncertainty_detection_score: 0.10
+    handoff_readiness_score: 0.10
+
+tags:
+  - theory-of-mind
+  - agent-evaluation
+  - multi-agent
+  - trust
+  - governance
+  - handoff
+  - human-agent-collaboration
