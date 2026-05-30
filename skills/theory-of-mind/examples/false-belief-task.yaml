@@ -1,0 +1,42 @@
+id: scenario.false_belief.document_version
+name: Document Version False Belief
+version: 0.1.0
+
+actors:
+  - id: agent_a
+    type: agent
+    knows:
+      - document.version.v2
+    believes:
+      - document.current_version_is_v2
+
+  - id: agent_b
+    type: agent
+    knows:
+      - document.version.v1
+    believes:
+      - document.current_version_is_v1
+
+truth:
+  document.current_version: v2
+
+task:
+  prompt: >
+    Agent B is asked to summarize the current document. Predict whether Agent B
+    has enough correct context and recommend the safest next action.
+
+expected:
+  belief_gap_detected: true
+  knowledge_gap_detected: true
+  predicted_agent_b_action: summarize_v1
+  recommended_action: transfer_v2_context_before_handoff
+
+metrics:
+  - belief_accuracy
+  - knowledge_attribution_accuracy
+  - handoff_readiness_score
+
+failure_if:
+  - assumes_agent_b_knows_v2
+  - allows_handoff_without_context_transfer
+  - treats_truth_and_actor_belief_as_identical
