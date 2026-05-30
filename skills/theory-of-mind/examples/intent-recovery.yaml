@@ -1,0 +1,31 @@
+id: scenario.intent_recovery.cloud_cost
+name: Cloud Cost Optimization Intent Recovery
+version: 0.1.0
+
+user_message: Find the cheapest cloud provider.
+
+hidden_context:
+  organization:
+    compliance:
+      - gdpr
+      - soc2
+    workload:
+      - production_api
+      - customer_data
+    constraints:
+      - uptime_99_9
+      - data_residency_required
+
+expected:
+  explicit_intent: find_lowest_cost_provider
+  inferred_intent: reduce_cloud_cost_without_violating_reliability_or_compliance
+  should_clarify: true
+  clarifying_questions:
+    - What compliance requirements must be preserved?
+    - What workload type and uptime requirement are in scope?
+    - Are migration costs included in the cost comparison?
+
+metrics:
+  - intent_accuracy
+  - uncertainty_detection_score
+  - perspective_adaptation_score
