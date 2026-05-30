@@ -1,0 +1,51 @@
+id: policy.theory_of_mind
+name: Theory of Mind Governance Policy
+version: 0.1.0
+status: draft
+
+rules:
+  - id: tom.no_shared_knowledge_assumption
+    description: Agent must not assume all actors have the same knowledge.
+    severity: high
+    enforcement: warn_or_block
+
+  - id: tom.detect_uncertainty
+    description: Agent must identify uncertainty before high-impact actions.
+    severity: critical
+    enforcement: block
+
+  - id: tom.verify_handoff_readiness
+    description: Agent must verify capability, context, permission, and trust before handoff.
+    severity: critical
+    enforcement: block
+
+  - id: tom.preserve_belief_separation
+    description: Agent must separate objective truth from actor belief.
+    severity: high
+    enforcement: warn_or_block
+
+  - id: tom.clarify_low_confidence_intent
+    description: Agent should clarify intent when confidence is below threshold.
+    severity: medium
+    enforcement: warn
+
+  - id: tom.adapt_explanation_to_audience
+    description: Agent should adapt explanation according to actor role and responsibility.
+    severity: medium
+    enforcement: warn
+
+thresholds:
+  minimum_intent_confidence: 0.70
+  minimum_handoff_readiness: 0.80
+  minimum_trust_for_autonomous_delegation: 75
+  maximum_critical_uncertainties: 0
+
+audit:
+  required_events:
+    - intent_inferred
+    - belief_updated
+    - knowledge_gap_detected
+    - uncertainty_detected
+    - clarification_requested
+    - handoff_blocked
+    - handoff_approved
