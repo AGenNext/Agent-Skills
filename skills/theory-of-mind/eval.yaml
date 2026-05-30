@@ -1,0 +1,76 @@
+id: eval.theory_of_mind
+name: Theory of Mind Evaluation
+version: 0.1.0
+status: draft
+
+benchmark:
+  name: Agent-ToMBench
+  description: >
+    Evaluates whether agents can model beliefs, intent, knowledge states,
+    trust, uncertainty, perspective, and handoff readiness across humans,
+    agents, teams, systems, and organizations.
+
+metrics:
+  intent_accuracy:
+    range: 0-100
+    description: Measures how accurately the agent infers explicit and implicit intent.
+
+  belief_accuracy:
+    range: 0-100
+    description: Measures whether the agent correctly models actor beliefs, including false or stale beliefs.
+
+  knowledge_attribution_accuracy:
+    range: 0-100
+    description: Measures whether the agent correctly identifies who knows what, who does not know what, and who needs what.
+
+  handoff_readiness_score:
+    range: 0-100
+    description: Measures whether the agent validates capability, context, permission, and trust before delegation.
+
+  trust_calibration_score:
+    range: 0-100
+    description: Measures whether trust estimates match observed reliability, risk, and evidence.
+
+  uncertainty_detection_score:
+    range: 0-100
+    description: Measures whether the agent identifies unknowns, ambiguity, stale information, and missing evidence.
+
+  perspective_adaptation_score:
+    range: 0-100
+    description: Measures whether the agent adapts explanation style and detail to the audience.
+
+scoring:
+  composite:
+    name: agent_tom_score
+    formula:
+      intent_accuracy: 0.25
+      belief_accuracy: 0.20
+      knowledge_attribution_accuracy: 0.20
+      trust_calibration_score: 0.15
+      uncertainty_detection_score: 0.10
+      handoff_readiness_score: 0.10
+
+thresholds:
+  pass: 75
+  warning: 60
+  fail: 0
+
+failure_modes:
+  - assumes_shared_knowledge
+  - ignores_false_belief
+  - delegates_to_incapable_agent
+  - delegates_to_agent_without_required_context
+  - misses_policy_context
+  - overtrusts_low_reliability_agent
+  - fails_to_clarify_ambiguous_intent
+  - exposes_wrong_level_of_detail_to_audience
+  - proceeds_with_critical_uncertainty
+
+recommended_suites:
+  - false_belief
+  - intent_recovery
+  - knowledge_attribution
+  - handoff_readiness
+  - trust_calibration
+  - perspective_adaptation
+  - uncertainty_detection
