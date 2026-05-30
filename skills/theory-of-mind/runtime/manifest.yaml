@@ -1,0 +1,105 @@
+id: runtime.theory_of_mind
+name: Theory of Mind Runtime Compatibility Manifest
+version: 0.1.0
+status: draft
+
+skill: skill.theory_of_mind
+
+summary: >
+  Defines how the Theory of Mind skill integrates with AGenNext runtime,
+  governance, trust, evaluation, and handoff systems without owning runtime execution.
+
+state_entities:
+  - Actor
+  - MentalModel
+  - ActorBelief
+  - ActorKnowledgeState
+  - ActorIntent
+  - ActorAssumption
+  - ActorUncertainty
+  - PerspectiveProfile
+  - TrustRelationship
+  - HandoffReadiness
+
+graph_relations:
+  - from: Agent
+    relation: HAS_MIND
+    to: MentalModel
+
+  - from: MentalModel
+    relation: MODELS_ACTOR
+    to: Actor
+
+  - from: Actor
+    relation: BELIEVES
+    to: Claim
+
+  - from: Actor
+    relation: KNOWS
+    to: Entity
+
+  - from: Actor
+    relation: DOES_NOT_KNOW
+    to: Entity
+
+  - from: Actor
+    relation: INTENDS
+    to: Objective
+
+  - from: Actor
+    relation: ASSUMES
+    to: Claim
+
+  - from: Actor
+    relation: UNCERTAIN_ABOUT
+    to: Claim
+
+  - from: Actor
+    relation: TRUSTS
+    to: Actor
+
+  - from: Agent
+    relation: CAN_HANDOFF_TO
+    to: Agent
+
+recommended_apis:
+  - method: POST
+    path: /mind/intent
+    operation: infer_intent
+
+  - method: POST
+    path: /mind/beliefs
+    operation: update_actor_belief
+
+  - method: GET
+    path: /mind/actors/{actor_id}
+    operation: get_actor_model
+
+  - method: POST
+    path: /mind/handoff/readiness
+    operation: evaluate_handoff_readiness
+
+  - method: POST
+    path: /mind/uncertainty
+    operation: evaluate_uncertainty
+
+runtime_consumers:
+  - Agent-BE
+  - Agent-Runtime
+  - Agent-Governance
+  - Agent-Trust
+  - Agent-Eval
+  - Agent-Bench
+  - Agent-Maturity
+  - Agent-Teams
+
+audit_events:
+  - intent_inferred
+  - belief_updated
+  - knowledge_gap_detected
+  - assumption_recorded
+  - uncertainty_detected
+  - trust_calibrated
+  - handoff_blocked
+  - handoff_allowed
+  - clarification_recommended
