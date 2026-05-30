@@ -1,0 +1,43 @@
+id: scenario.handoff.security_review
+name: Security Review Handoff Readiness
+version: 0.1.0
+
+source_agent:
+  id: product_agent
+  skills:
+    - product_analysis
+    - writing
+
+target_agent:
+  id: security_agent
+  skills:
+    - security_review
+  tools:
+    - policy_scanner
+  permissions:
+    - read.security_policy
+
+task:
+  description: Review enterprise deployment proposal for compliance risk.
+
+required:
+  skills:
+    - security_review
+    - compliance_reasoning
+  tools:
+    - policy_scanner
+  permissions:
+    - read.security_policy
+    - read.deployment_architecture
+
+expected:
+  handoff_allowed: false
+  reason:
+    - missing_skill.compliance_reasoning
+    - missing_permission.read.deployment_architecture
+  recommended_action: upgrade_context_or_loop_in_human
+
+metrics:
+  - handoff_readiness_score
+  - capability_modeling_score
+  - uncertainty_detection_score
