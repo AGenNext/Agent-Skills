@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+package agennext.skills.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/AGenNext/Agent-Skills/gen/go/agennext/skills/v1;skillsv1";
+
+// Skill lifecycle
+enum SkillStatus {
+  SKILL_STATUS_UNSPECIFIED = 0;
+  SKILL_STATUS_DRAFT = 1;
+  SKILL_STATUS_PROPOSED = 2;
+  SKILL_STATUS_VALIDATED = 3;
+  SKILL_STATUS_APPROVED = 4;
+  SKILL_STATUS_ACTIVE = 5;
+  SKILL_STATUS_DEPRECATED = 6;
+  SKILL_STATUS_ARCHIVED = 7;
+}
+
+// Skill capabilities
+message Skill {
+  string id = 1;
+  string name = 2;
+  string version = 3;
+  string description = 4;
+  repeated string inputs = 5;
+  repeated string outputs = 6;
+  repeated string tools = 7;
+  repeated string constraints = 8;
+  repeated string evidence = 9;
+  repeated string validation = 10;
+  repeated string reconciliation = 11;
+  SkillStatus status = 12;
+  string owner = 13;
+  google.protobuf.Timestamp created_at = 14;
+  google.protobuf.Timestamp updated_at = 15;
+}
+
+// Skill usage binding
+message SkillBinding {
+  string id = 1;
+  string skill_id = 2;
+  string bound_to_agent = 3;
+  repeated string constraints = 4;
+  repeated string evidence_refs = 5;
+  google.protobuf.Timestamp bound_at = 6;
+}
+
+// Skill invocation record
+message SkillInvocation {
+  string id = 1;
+  string skill_id = 2;
+  string invoked_by_agent = 3;
+  repeated string inputs = 4;
+  repeated string outputs = 5;
+  repeated string evidence_refs = 6;
+  google.protobuf.Timestamp invoked_at = 7;
+  SkillStatus status = 8;
+}
